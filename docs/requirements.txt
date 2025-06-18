@@ -1,6 +1,17 @@
 # Documentation requirements for ReadTheDocs
+# Core Sphinx and theme
 sphinx>=4.0.0
 sphinx-rtd-theme>=1.3.0
+
+# MyST parser and dependencies
 myst-parser>=0.18.0
 linkify-it-py>=2.0.0
+markdown-it-py>=2.0.0
+
+# Core project dependencies (needed for autodoc)
+requests>=2.25.0
+requests-oauthlib>=1.3.0
+urllib3>=1.26.0
+colorama>=0.4.4
+rich>=13.0.0
 
