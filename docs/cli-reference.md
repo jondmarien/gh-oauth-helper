@@ -114,6 +114,9 @@ gh-oauth-helper --json auth --scopes user
 
 #### Sample Output
 
+**Visual Example:**
+![CLI Auth Command Output](../images/gh-oauth-helper-1.png)
+
 **Human-readable format:**
 ```
 ✓ Generated GitHub OAuth authorization URL
@@ -171,6 +174,9 @@ gh-oauth-helper --json token --code ghu_1234567890abcdef
 
 #### Sample Output
 
+**Visual Example:**
+![CLI Token Command Output](../images/gh-oauth-helper-2.png)
+
 **Human-readable format:**
 ```
 ✓ Successfully exchanged authorization code for access token
@@ -219,6 +225,9 @@ gh-oauth-helper --json test --token gho_1234567890abcdef
 ```
 
 #### Sample Output
+
+**Visual Example:**
+![CLI Test Command Output](../images/gh-oauth-helper-3.png)
 
 **Human-readable format:**
 ```

@@ -175,6 +175,14 @@ gh-oauth-helper revoke --token gho_1234567890abcdef
 gh-oauth-helper --verbose test --token gho_1234567890abcdef
 ```
 
+**Visual Examples:**
+
+*Standard Output:*
+![CLI Standard Output](images/gh-oauth-helper-3.png)
+
+*Verbose Output (with `--verbose` flag):*
+![CLI Verbose Output](images/gh-oauth-helper-verbose-2.png)
+
 ### Common Workflows
 
 ```bash

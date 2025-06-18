@@ -56,12 +56,18 @@ The simplest way to get a GitHub access token - just paste the full callback URL
    • Browser redirects to: `http://localhost:8080/callback?code=abc123def456&state=xyz789`
 
    Output:
+   
+   ![Standard CLI Output - Auth](images/gh-oauth-helper-1.png)
+   
    ```
    🚀 Opening GitHub authorization page...
    📋 After authorization, run `gh-oauth-helper token --url "FULL CALLBACK URL"
    ```
 
 3. **Paste the complete URL:**
+   
+   ![Standard CLI Output - Token Exchange](images/gh-oauth-helper-2.png)
+   
    ```
    📋 After authorization, paste the complete callback URL here:
    > gh-oauth-helper token --url http://localhost:8080/callback?code=abc123def456&state=xyz789
@@ -93,8 +99,8 @@ Use `--verbose` on both commands for detailed information about operations, API 
 
 | Normal mode | Verbose mode |
 |-------------|-------------|
-| ✅ Access token generated successfully! | ✅ Access token generated successfully!<br>📝 Scopes: repo, user:email, read:org<br>⏰ Expires: Never<br>🔍 Raw response: {"access_token":"ghp_xxx...","scope":"repo,user:email,read:org","token_type":"bearer"}<br>📊 Rate limit: 5000/5000 remaining |
-| ✅ Token is valid | ✅ Token is valid<br>👤 User: your-username (ID: 12345)<br>📝 Scopes: repo, user:email, read:org<br>⏰ Token created: 2024-01-15T10:30:00Z<br>📊 Rate limit: 4999/5000 remaining |
+| ![Standard CLI Output](images/gh-oauth-helper-3.png) | ![Verbose CLI Output](images/gh-oauth-helper-verbose-1.png) |
+| ✅ Token is valid | ![Verbose CLI Output - Token Test](images/gh-oauth-helper-verbose-2.png) |
 
 #### Platform-Specific Notes
 
