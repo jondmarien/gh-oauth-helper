@@ -20,12 +20,27 @@ A secure, easy-to-use Python library and CLI tool for GitHub OAuth authenticatio
 
 ### Installation
 
+#### Using uv (Recommended - Fastest Python Package Manager)
+
+```bash
+# Install from PyPI
+uv add gh-oauth-helper
+
+# Or install with development dependencies
+uv add "gh-oauth-helper[dev]"
+
+# For development/testing with all extras
+uv add "gh-oauth-helper[dev,docs]"
+```
+
+#### Using pip
+
 ```bash
 # Install from PyPI
 pip install gh-oauth-helper
 
 # Or install with development dependencies
-pip install gh-oauth-helper[dev]
+pip install "gh-oauth-helper[dev]"
 ```
 
 ### Set Up Environment Variables
@@ -264,6 +279,31 @@ gh-oauth-helper token --code CODE --state STATE
 We welcome contributions! Please see our [Contributing Guide](docs/contributing.md) for details.
 
 ### Quick Development Setup
+
+#### Using uv (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/jondmarien/gh-oauth-helper.git
+cd gh-oauth-helper
+
+# Install dependencies and create virtual environment automatically
+uv sync --extra dev --extra docs
+
+# Activate the virtual environment (if needed)
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Run tests
+uv run pytest
+
+# Run linting
+uv run make lint
+
+# Format code
+uv run make format
+```
+
+#### Using pip
 
 ```bash
 # Clone the repository

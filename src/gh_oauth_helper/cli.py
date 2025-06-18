@@ -10,8 +10,23 @@ import sys
 import json
 import webbrowser
 import os
+from datetime import datetime
 from typing import Optional, Dict, Any
 
+try:
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.text import Text
+    from rich.table import Table
+    from rich.syntax import Syntax
+    from rich.markdown import Markdown
+    from rich import print as rprint
+    from rich.columns import Columns
+    from rich.align import Align
+    HAS_RICH = True
+except ImportError:
+    HAS_RICH = False
+    
 try:
     import colorama
     from colorama import Fore, Style, init
@@ -26,6 +41,149 @@ except ImportError:
     HAS_COLOR = False
 
 from .core import GitHubOAuth, GitHubOAuthError
+
+# Initialize Rich console
+console = Console() if HAS_RICH else None
+
+
+def show_header() -> None:
+    """Display the ASCII art header with author and date info."""
+    if HAS_RICH:
+        # ASCII art for gh-oauth-helper
+        ascii_art = Text('''
+ ██████╗ ██╗  ██╗      ██████╗  █████╗ ██╗   ██╗████████╗██╗  ██╗
+██╔════╝ ██║  ██║     ██╔═══██╗██╔══██╗██║   ██║╚══██╔══╝██║  ██║
+██║  ███╗███████║     ██║   ██║███████║██║   ██║   ██║   ███████║
+██║   ██║██╔══██║     ██║   ██║██╔══██║██║   ██║   ██║   ██╔══██║
+╚██████╔╝██║  ██║     ╚██████╔╝██║  ██║╚██████╔╝   ██║   ██║  ██║
+ ╚═════╝ ╚═╝  ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
+
+    ██╗  ██╗███████╗██╗     ██████╗ ███████╗██████╗ 
+    ██║  ██║██╔════╝██║     ██╔══██╗██╔════╝██╔══██╗
+    ███████║█████╗  ██║     ██████╔╝█████╗  ██████╔╝
+    ██╔══██║██╔══╝  ██║     ██╔═══╝ ██╔══╝  ██╔══██╗
+    ██║  ██║███████╗███████╗██║     ███████╗██║  ██║
+    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝
+''', style="bold cyan")
+        
+        # Author and version info
+        info_table = Table.grid()
+        info_table.add_column(style="dim")
+        info_table.add_column(style="bold white")
+        
+        current_year = datetime.now().year
+        info_table.add_row("Author:", "Jonathan Marien (@jondmarien)")
+        info_table.add_row("Email:", "jon@chron0.tech")
+        info_table.add_row("Year:", str(current_year))
+        info_table.add_row("License:", "MIT")
+        
+        # Create panels
+        art_panel = Panel(
+            ascii_art,
+            border_style="bright_blue",
+            padding=(0, 1)
+        )
+        
+        info_panel = Panel(
+            Align.center(info_table),
+            title="[bold cyan]About[/bold cyan]",
+            border_style="green",
+            padding=(1, 2)
+        )
+        
+        # Display header
+        console.print(art_panel)
+        console.print(info_panel)
+        console.print()
+        
+    else:
+        # Fallback ASCII art for terminals without Rich
+        header_text = f"""
+{Fore.CYAN}{Style.BRIGHT}
+ ██████╗ ██╗  ██╗      ██████╗  █████╗ ██╗   ██╗████████╗██╗  ██╗
+██╔════╝ ██║  ██║     ██╔═══██╗██╔══██╗██║   ██║╚══██╔══╝██║  ██║
+██║  ███╗███████║     ██║   ██║███████║██║   ██║   ██║   ███████║
+██║   ██║██╔══██║     ██║   ██║██╔══██║██║   ██║   ██║   ██╔══██║
+╚██████╔╝██║  ██║     ╚██████╔╝██║  ██║╚██████╔╝   ██║   ██║  ██║
+ ╚═════╝ ╚═╝  ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
+
+    ██╗  ██╗███████╗██╗     ██████╗ ███████╗██████╗ 
+    ██║  ██║██╔════╝██║     ██╔══██╗██╔════╝██╔══██╗
+    ███████║█████╗  ██║     ██████╔╝█████╗  ██████╔╝
+    ██╔══██║██╔══╝  ██║     ██╔═══╝ ██╔══╝  ██╔══██╗
+    ██║  ██║███████╗███████╗██║     ███████╗██║  ██║
+    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝
+{Style.RESET_ALL}
+
+{Fore.GREEN}{Style.BRIGHT}GitHub OAuth Helper{Style.RESET_ALL}
+{Fore.WHITE}Author: Jonathan Marien (@jondmarien){Style.RESET_ALL}
+{Fore.WHITE}Email: jon@chron0.tech{Style.RESET_ALL}
+{Fore.WHITE}Year: {datetime.now().year}{Style.RESET_ALL}
+{Fore.WHITE}License: MIT{Style.RESET_ALL}
+
+{'-' * 60}
+"""
+        print(header_text)
+
+
+def print_rich_success(text: str) -> None:
+    """Print success message with rich formatting."""
+    if HAS_RICH:
+        console.print(f"[bold green]✓[/bold green] {text}")
+    else:
+        print_success(text)
+
+
+def print_rich_error(text: str) -> None:
+    """Print error message with rich formatting."""
+    if HAS_RICH:
+        console.print(f"[bold red]✗[/bold red] {text}")
+    else:
+        print_error(text)
+
+
+def print_rich_warning(text: str) -> None:
+    """Print warning message with rich formatting."""
+    if HAS_RICH:
+        console.print(f"[bold yellow]⚠[/bold yellow] {text}")
+    else:
+        print_warning(text)
+
+
+def print_rich_info(text: str) -> None:
+    """Print info message with rich formatting."""
+    if HAS_RICH:
+        console.print(f"[bold blue]ℹ[/bold blue] {text}")
+    else:
+        print_info(text)
+
+
+def display_rich_table(data: Dict[str, Any], title: str = "Information") -> None:
+    """Display data in a rich table format."""
+    if HAS_RICH:
+        table = Table(title=title, show_header=True, header_style="bold magenta")
+        table.add_column("Property", style="cyan", no_wrap=True)
+        table.add_column("Value", style="white")
+        
+        for key, value in data.items():
+            # Format key nicely
+            formatted_key = key.replace('_', ' ').title()
+            table.add_row(formatted_key, str(value))
+        
+        console.print(table)
+    else:
+        print_colored(f"\n{title}:", "cyan", bold=True)
+        for key, value in data.items():
+            print_colored(f"  {key.replace('_', ' ').title()}: {value}", "white")
+
+
+def display_code_block(code: str, language: str = "bash") -> None:
+    """Display a syntax-highlighted code block."""
+    if HAS_RICH:
+        syntax = Syntax(code, language, theme="monokai", line_numbers=False)
+        console.print(syntax)
+    else:
+        print_colored(f"\n{code}", "white")
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -82,6 +240,11 @@ Environment Variables:
         '--verbose', '-v',
         action='store_true',
         help='Enable verbose output'
+    )
+    parser.add_argument(
+        '--no-header',
+        action='store_true',
+        help='Disable ASCII art header display'
     )
     
     # Subcommands
@@ -224,7 +387,7 @@ def cmd_auth(args: argparse.Namespace) -> None:
     """Handle auth command - generate authorization URL."""
     try:
         if args.verbose:
-            print_info("Initializing GitHub OAuth helper...")
+            print_rich_info("Initializing GitHub OAuth helper...")
         
         oauth = create_oauth_helper(args)
         auth_url, state = oauth.generate_authorization_url(
@@ -241,35 +404,46 @@ def cmd_auth(args: argparse.Namespace) -> None:
         if args.json:
             output_result(result, args)
         else:
-            print_success("Generated GitHub OAuth authorization URL")
-            if args.verbose:
-                print_info(f"Scopes requested: {', '.join(args.scopes)}")
-                print_info(f"State parameter: {state}")
-                print_info(f"Redirect URI: {oauth.redirect_uri}")
-                print()
+            print_rich_success("Generated GitHub OAuth authorization URL")
             
-            print_colored("Authorization URL:", "cyan", bold=True)
-            print_colored(auth_url, "white")
-            print()
-            print_colored(f"State (save this for verification): {state}", "yellow")
+            if args.verbose:
+                info_data = {
+                    'scopes_requested': ', '.join(args.scopes),
+                    'state_parameter': state,
+                    'redirect_uri': oauth.redirect_uri
+                }
+                display_rich_table(info_data, "OAuth Configuration")
+            
+            if HAS_RICH:
+                console.print("\n[bold cyan]Authorization URL:[/bold cyan]")
+                console.print(f"[link]{auth_url}[/link]")
+                console.print(f"\n[bold yellow]State (save this for verification):[/bold yellow] [cyan]{state}[/cyan]")
+            else:
+                print_colored("Authorization URL:", "cyan", bold=True)
+                print_colored(auth_url, "white")
+                print()
+                print_colored(f"State (save this for verification): {state}", "yellow")
             
             if args.open:
-                print_info("Opening authorization URL in browser...")
+                print_rich_info("Opening authorization URL in browser...")
                 try:
                     webbrowser.open(auth_url)
-                    print_success("Browser opened successfully")
+                    print_rich_success("Browser opened successfully")
                 except Exception as e:
-                    print_warning(f"Could not open browser: {e}")
-                    print_info("Please copy and paste the URL manually")
+                    print_rich_warning(f"Could not open browser: {e}")
+                    print_rich_info("Please copy and paste the URL manually")
             
     except GitHubOAuthError as e:
-        print_error(f"OAuth Error: {e}")
+        print_rich_error(f"OAuth Error: {e}")
         sys.exit(1)
     except Exception as e:
-        print_error(f"Unexpected error: {e}")
+        print_rich_error(f"Unexpected error: {e}")
         if args.verbose:
             import traceback
-            print_colored(traceback.format_exc(), "red")
+            if HAS_RICH:
+                console.print(f"[red]{traceback.format_exc()}[/red]")
+            else:
+                print_colored(traceback.format_exc(), "red")
         sys.exit(1)
 
 
@@ -277,7 +451,7 @@ def cmd_token(args: argparse.Namespace) -> None:
     """Handle token command - exchange code for token."""
     try:
         if args.verbose:
-            print_info("Exchanging authorization code for access token...")
+            print_rich_info("Exchanging authorization code for access token...")
         
         oauth = create_oauth_helper(args)
         token_data = oauth.exchange_code_for_token(
@@ -288,29 +462,44 @@ def cmd_token(args: argparse.Namespace) -> None:
         if args.json:
             output_result(token_data, args)
         else:
-            print_success("Successfully exchanged authorization code for access token")
+            print_rich_success("Successfully exchanged authorization code for access token")
             
             if args.verbose:
-                print_info(f"Token type: {token_data.get('token_type', 'N/A')}")
-                print_info(f"Scope: {token_data.get('scope', 'N/A')}")
-                print()
+                token_info = {
+                    'token_type': token_data.get('token_type', 'N/A'),
+                    'scope': token_data.get('scope', 'N/A'),
+                    'expires_in_seconds': token_data.get('expires_in', 'N/A')
+                }
+                display_rich_table(token_info, "Token Details")
             
-            print_colored("Access Token:", "cyan", bold=True)
-            print_colored(token_data.get('access_token'), "white")
-            
-            if 'refresh_token' in token_data:
-                print_colored(f"\nRefresh Token: {token_data['refresh_token']}", "yellow")
-            if 'expires_in' in token_data:
-                print_info(f"Expires in: {token_data['expires_in']} seconds")
+            if HAS_RICH:
+                console.print("\n[bold cyan]Access Token:[/bold cyan]")
+                console.print(f"[green]{token_data.get('access_token')}[/green]")
+                
+                if 'refresh_token' in token_data:
+                    console.print(f"\n[bold yellow]Refresh Token:[/bold yellow] [yellow]{token_data['refresh_token']}[/yellow]")
+                if 'expires_in' in token_data:
+                    console.print(f"\n[bold blue]ℹ[/bold blue] Expires in: [white]{token_data['expires_in']}[/white] seconds")
+            else:
+                print_colored("Access Token:", "cyan", bold=True)
+                print_colored(token_data.get('access_token'), "white")
+                
+                if 'refresh_token' in token_data:
+                    print_colored(f"\nRefresh Token: {token_data['refresh_token']}", "yellow")
+                if 'expires_in' in token_data:
+                    print_info(f"Expires in: {token_data['expires_in']} seconds")
                 
     except GitHubOAuthError as e:
-        print_error(f"OAuth Error: {e}")
+        print_rich_error(f"OAuth Error: {e}")
         sys.exit(1)
     except Exception as e:
-        print_error(f"Unexpected error: {e}")
+        print_rich_error(f"Unexpected error: {e}")
         if args.verbose:
             import traceback
-            print_colored(traceback.format_exc(), "red")
+            if HAS_RICH:
+                console.print(f"[red]{traceback.format_exc()}[/red]")
+            else:
+                print_colored(traceback.format_exc(), "red")
         sys.exit(1)
 
 
@@ -318,7 +507,7 @@ def cmd_test(args: argparse.Namespace) -> None:
     """Handle test command - test token validity."""
     try:
         if args.verbose:
-            print_info("Testing access token validity...")
+            print_rich_info("Testing access token validity...")
         
         oauth = create_oauth_helper(args)
         user_data = oauth.test_api_access(args.token)
@@ -326,24 +515,40 @@ def cmd_test(args: argparse.Namespace) -> None:
         if args.json:
             output_result(user_data, args)
         else:
-            print_success("Token is valid! User information:")
-            print()
-            print_colored(f"Username: {user_data.get('login')}", "cyan")
-            print_colored(f"Name: {user_data.get('name', 'N/A')}", "white")
-            print_colored(f"Email: {user_data.get('email', 'N/A')}", "white")
-            print_colored(f"User ID: {user_data.get('id')}", "white")
-            print_colored(f"Account Type: {user_data.get('type')}", "white")
+            print_rich_success("Token is valid! User information:")
+            
+            # Create user info table
+            user_info = {
+                'username': user_data.get('login', 'N/A'),
+                'name': user_data.get('name', 'N/A'),
+                'email': user_data.get('email', 'N/A'),
+                'user_id': str(user_data.get('id', 'N/A')),
+                'account_type': user_data.get('type', 'N/A'),
+                'public_repos': str(user_data.get('public_repos', 'N/A')),
+                'followers': str(user_data.get('followers', 'N/A')),
+                'following': str(user_data.get('following', 'N/A'))
+            }
+            
             if user_data.get('company'):
-                print_colored(f"Company: {user_data.get('company')}", "white")
+                user_info['company'] = user_data.get('company')
+            if user_data.get('location'):
+                user_info['location'] = user_data.get('location')
+            if user_data.get('blog'):
+                user_info['blog'] = user_data.get('blog')
+            
+            display_rich_table(user_info, "GitHub User Information")
             
     except GitHubOAuthError as e:
-        print_error(f"OAuth Error: {e}")
+        print_rich_error(f"OAuth Error: {e}")
         sys.exit(1)
     except Exception as e:
-        print_error(f"Unexpected error: {e}")
+        print_rich_error(f"Unexpected error: {e}")
         if args.verbose:
             import traceback
-            print_colored(traceback.format_exc(), "red")
+            if HAS_RICH:
+                console.print(f"[red]{traceback.format_exc()}[/red]")
+            else:
+                print_colored(traceback.format_exc(), "red")
         sys.exit(1)
 
 
@@ -351,7 +556,7 @@ def cmd_revoke(args: argparse.Namespace) -> None:
     """Handle revoke command - revoke access token."""
     try:
         if args.verbose:
-            print_info("Revoking access token...")
+            print_rich_info("Revoking access token...")
         
         oauth = create_oauth_helper(args)
         success = oauth.revoke_token(args.token)
@@ -362,18 +567,23 @@ def cmd_revoke(args: argparse.Namespace) -> None:
             output_result(result, args)
         else:
             if success:
-                print_success("Token successfully revoked")
+                print_rich_success("Token successfully revoked")
+                if HAS_RICH:
+                    console.print("[dim]The token can no longer be used to access GitHub's API.[/dim]")
             else:
-                print_warning("Failed to revoke token (it may already be invalid)")
+                print_rich_warning("Failed to revoke token (it may already be invalid)")
                 
     except GitHubOAuthError as e:
-        print_error(f"OAuth Error: {e}")
+        print_rich_error(f"OAuth Error: {e}")
         sys.exit(1)
     except Exception as e:
-        print_error(f"Unexpected error: {e}")
+        print_rich_error(f"Unexpected error: {e}")
         if args.verbose:
             import traceback
-            print_colored(traceback.format_exc(), "red")
+            if HAS_RICH:
+                console.print(f"[red]{traceback.format_exc()}[/red]")
+            else:
+                print_colored(traceback.format_exc(), "red")
         sys.exit(1)
 
 
@@ -386,6 +596,10 @@ def main() -> None:
     if not args.command:
         parser.print_help()
         sys.exit(1)
+    
+    # Show header unless disabled or JSON output
+    if not getattr(args, 'no_header', False) and not getattr(args, 'json', False):
+        show_header()
     
     try:
         validate_args(args)
