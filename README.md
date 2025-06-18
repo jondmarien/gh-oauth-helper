@@ -146,11 +146,14 @@ gh-oauth-helper --json auth --scopes user
 ### Token Exchange
 
 ```bash
-# Exchange authorization code for access token
+# Method 1: Exchange authorization code for access token
 gh-oauth-helper token --code ghu_1234567890abcdef
 
 # With state verification (recommended)
 gh-oauth-helper token --code ghu_1234567890abcdef --state abc123
+
+# Method 2: Paste the full callback URL (easier!)
+gh-oauth-helper token --url "http://localhost:8080/callback?code=ghu_1234567890abcdef&state=abc123"
 
 # JSON output
 gh-oauth-helper --json token --code ghu_1234567890abcdef
@@ -177,6 +180,11 @@ gh-oauth-helper auth --open --scopes user repo
 # (authorize in browser, get code from callback)
 gh-oauth-helper token --code YOUR_CODE --state YOUR_STATE
 gh-oauth-helper test --token YOUR_ACCESS_TOKEN
+
+# Easy method: Use the full callback URL (recommended for beginners)
+gh-oauth-helper auth --open
+# (authorize in browser, copy the entire callback URL)
+gh-oauth-helper token --url "http://localhost:8080/callback?code=ghu_...&state=..."
 
 # One-liner for development (using environment variables)
 gh-oauth-helper auth --open && echo "Paste your code:" && read CODE && gh-oauth-helper token --code $CODE

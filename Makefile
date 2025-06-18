@@ -41,7 +41,10 @@ build:				## Build the package
 	python -m build
 
 docs:				## Build documentation
-	cd docs && make html
+	make html
+
+html:			## Build HTML documentation only
+	uv run sphinx-build -b html docs docs/_build/html
 
 serve-docs:			## Serve documentation locally
 	cd docs/_build/html && python -m http.server 8000

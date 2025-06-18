@@ -12,6 +12,7 @@ import webbrowser
 import os
 from datetime import datetime
 from typing import Optional, Dict, Any
+from urllib.parse import urlparse, parse_qs
 
 try:
     from rich.console import Console
@@ -210,8 +211,11 @@ Examples:
   # Generate authorization URL
   gh-oauth-helper auth --client-id YOUR_ID --client-secret YOUR_SECRET
 
-  # Exchange code for token
+  # Exchange code for token (method 1: provide code directly)
   gh-oauth-helper token --client-id YOUR_ID --client-secret YOUR_SECRET --code AUTH_CODE
+  
+  # Exchange code for token (method 2: provide full callback URL)
+  gh-oauth-helper token --client-id YOUR_ID --client-secret YOUR_SECRET --url "http://localhost:8080/callback?code=AUTH_CODE&state=STATE"
 
   # Test token validity
   gh-oauth-helper test --client-id YOUR_ID --client-secret YOUR_SECRET --token ACCESS_TOKEN
@@ -289,14 +293,21 @@ Environment Variables:
         'token',
         help='Exchange authorization code for access token'
     )
-    token_parser.add_argument(
+    
+    # Create mutually exclusive group for code input methods
+    code_group = token_parser.add_mutually_exclusive_group(required=True)
+    code_group.add_argument(
         '--code',
-        required=True,
         help='Authorization code from GitHub callback'
     )
+    code_group.add_argument(
+        '--url',
+        help='Full callback URL from GitHub (will extract code and state automatically)'
+    )
+    
     token_parser.add_argument(
         '--state',
-        help='State parameter for CSRF verification'
+        help='State parameter for CSRF verification (not needed if using --url)'
     )
     
     # Test command - test token validity
@@ -466,10 +477,31 @@ def cmd_token(args: argparse.Namespace) -> None:
         if args.verbose:
             print_rich_info("Exchanging authorization code for access token...")
         
+        # Extract code and state from URL if provided
+        if args.url:
+            parsed_url = urlparse(args.url)
+            query_params = parse_qs(parsed_url.query)
+            
+            # Extract code
+            if 'code' not in query_params:
+                raise ValueError("No 'code' parameter found in the provided URL")
+            code = query_params['code'][0]
+            
+            # Extract state if present
+            state = query_params.get('state', [None])[0]
+            
+            if args.verbose:
+                print_rich_info(f"Extracted code from URL: {code[:8]}...")
+                if state:
+                    print_rich_info(f"Extracted state from URL: {state}")
+        else:
+            code = args.code
+            state = args.state
+        
         oauth = create_oauth_helper(args)
         token_data = oauth.exchange_code_for_token(
-            code=args.code,
-            state=args.state
+            code=code,
+            state=state
         )
         
         if args.json:
