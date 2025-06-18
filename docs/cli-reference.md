@@ -10,10 +10,11 @@ The `gh-oauth-helper` CLI provides a convenient way to handle GitHub OAuth authe
 
 The CLI features a modern, colorized interface with:
 
-- **🚀 ASCII Art Header**: Beautiful project branding displayed on startup
+- **🚀 ASCII Art Header**: Beautiful project branding with rainbow gradient colors
 - **📊 Rich Tables**: Clean, formatted data presentation
 - **🎯 Status Icons**: Visual indicators (✓, ℹ, ⚠, ✗) for different message types
-- **🌈 Color Coding**: Syntax highlighting and color-coded information
+- **🌈 Rainbow Gradients**: Each line of ASCII art displays in different vibrant colors
+- **🎭 Centered Layout**: ASCII art is perfectly centered within terminal panels
 - **📱 Responsive Design**: Adapts to terminal width and capabilities
 
 ### Header Display

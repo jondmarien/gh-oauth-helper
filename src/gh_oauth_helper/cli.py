@@ -49,22 +49,35 @@ console = Console() if HAS_RICH else None
 def show_header() -> None:
     """Display the ASCII art header with author and date info."""
     if HAS_RICH:
-        # ASCII art for gh-oauth-helper
-        ascii_art = Text('''
- ██████╗ ██╗  ██╗      ██████╗  █████╗ ██╗   ██╗████████╗██╗  ██╗
-██╔════╝ ██║  ██║     ██╔═══██╗██╔══██╗██║   ██║╚══██╔══╝██║  ██║
-██║  ███╗███████║     ██║   ██║███████║██║   ██║   ██║   ███████║
-██║   ██║██╔══██║     ██║   ██║██╔══██║██║   ██║   ██║   ██╔══██║
-╚██████╔╝██║  ██║     ╚██████╔╝██║  ██║╚██████╔╝   ██║   ██║  ██║
- ╚═════╝ ╚═╝  ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
-
-    ██╗  ██╗███████╗██╗     ██████╗ ███████╗██████╗ 
-    ██║  ██║██╔════╝██║     ██╔══██╗██╔════╝██╔══██╗
-    ███████║█████╗  ██║     ██████╔╝█████╗  ██████╔╝
-    ██╔══██║██╔══╝  ██║     ██╔═══╝ ██╔══╝  ██╔══██╗
-    ██║  ██║███████╗███████╗██║     ███████╗██║  ██║
-    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝
-''', style="bold cyan")
+        # ASCII art for gh-oauth-helper with rainbow gradient
+        ascii_lines = [
+            " ██████╗ ██╗  ██╗      ██████╗  █████╗ ██╗   ██╗████████╗██╗  ██╗",
+            "██╔════╝ ██║  ██║     ██╔═══██╗██╔══██╗██║   ██║╚══██╔══╝██║  ██║",
+            "██║  ███╗███████║     ██║   ██║███████║██║   ██║   ██║   ███████║",
+            "██║   ██║██╔══██║     ██║   ██║██╔══██║██║   ██║   ██║   ██╔══██║",
+            "╚██████╔╝██║  ██║     ╚██████╔╝██║  ██║╚██████╔╝   ██║   ██║  ██║",
+            " ╚═════╝ ╚═╝  ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝",
+            "",
+            "    ██╗  ██╗███████╗██╗     ██████╗ ███████╗██████╗ ",
+            "    ██║  ██║██╔════╝██║     ██╔══██╗██╔════╝██╔══██╗",
+            "    ███████║█████╗  ██║     ██████╔╝█████╗  ██████╔╝",
+            "    ██╔══██║██╔══╝  ██║     ██╔═══╝ ██╔══╝  ██╔══██╗",
+            "    ██║  ██║███████╗███████╗██║     ███████╗██║  ██║",
+            "    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝"
+        ]
+        
+        # Rainbow gradient colors
+        rainbow_colors = [
+            "bright_red", "red", "bright_yellow", "yellow", 
+            "bright_green", "green", "bright_cyan", "cyan",
+            "bright_blue", "blue", "bright_magenta", "magenta"
+        ]
+        
+        # Create rainbow gradient ASCII art
+        ascii_art = Text()
+        for i, line in enumerate(ascii_lines):
+            color = rainbow_colors[i % len(rainbow_colors)]
+            ascii_art.append(line + "\n", style=f"bold {color}")
         
         # Author and version info
         info_table = Table.grid()
@@ -77,9 +90,9 @@ def show_header() -> None:
         info_table.add_row("Year:", str(current_year))
         info_table.add_row("License:", "MIT")
         
-        # Create panels
+        # Create panels with centered ASCII art
         art_panel = Panel(
-            ascii_art,
+            Align.center(ascii_art),
             border_style="bright_blue",
             padding=(0, 1)
         )

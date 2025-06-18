@@ -10,10 +10,11 @@ build:
   tools:
     python: "3.11"
   jobs:
-    post_checkout:
-      # FIXME: this is a hack to install our project in development mode
-      # so that autodoc can find the modules and generate docs for them
-      - python -m pip install -e .
+    post_create_environment:
+      # Install uv for faster dependency management
+      - python -m pip install uv
+      # Install our project with all documentation dependencies using uv
+      - uv pip install -e ".[docs]" --system
 
 # Build documentation with Sphinx
 sphinx:
@@ -25,12 +26,5 @@ formats:
   - pdf
   - epub
 
-# Optionally declare the Python requirements required to build the docs
-python:
-  install:
-    - requirements: docs/requirements.txt
-    - method: pip
-      path: .
-      extra_requirements:
-        - docs
+# Dependencies are handled by uv in the post_create_environment job above
 
