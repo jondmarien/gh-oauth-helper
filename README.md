@@ -53,6 +53,8 @@ export GITHUB_REDIRECT_URI="http://localhost:8080/callback"  # Optional
 
 ### Basic CLI Usage
 
+![CLI Quick Start](images/gh-oauth-helper-1.png)
+
 ```bash
 # Generate authorization URL and open in browser
 gh-oauth-helper auth --open
@@ -132,6 +134,8 @@ For production applications:
 
 ### Authorization Flow
 
+![Authorization Flow](images/gh-oauth-helper-1.png)
+
 ```bash
 # Basic authorization (opens browser automatically)
 gh-oauth-helper auth --open
@@ -148,6 +152,8 @@ gh-oauth-helper --json auth --scopes user
 
 ### Token Exchange
 
+![Token Exchange](images/gh-oauth-helper-2.png)
+
 ```bash
 # Method 1: Exchange authorization code for access token (traditional)
 gh-oauth-helper token --code ghu_1234567890abcdef
@@ -163,6 +169,8 @@ gh-oauth-helper --json token --code ghu_1234567890abcdef
 ```
 
 ### Token Management
+
+![Token Management](images/gh-oauth-helper-3.png)
 
 ```bash
 # Test token validity
