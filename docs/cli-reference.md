@@ -147,17 +147,23 @@ gh-oauth-helper token [OPTIONS]
 
 | Option | Description | Required |
 |--------|-------------|----------|
-| `--code CODE` | Authorization code from GitHub | Yes |
+| `--code CODE` | Authorization code from GitHub | Yes (or use --url) |
 | `--state STATE` | State parameter for verification | No |
+| `--url URL` | Full callback URL with code and state | Yes (or use --code) |
+
+**Note:** `--code` and `--url` are mutually exclusive. The `--url` option automatically extracts both code and state parameters from the callback URL, making it easier to use. See [OAUTH_FLOW_GUIDE.md](../OAUTH_FLOW_GUIDE.md) for detailed examples.
 
 #### Examples
 
 ```bash
-# Basic token exchange
+# Basic token exchange (traditional method)
 gh-oauth-helper token --code ghu_1234567890abcdef
 
 # With state verification (recommended)
 gh-oauth-helper token --code ghu_1234567890abcdef --state abc123def456
+
+# Easy URL method (recommended for beginners - see OAUTH_FLOW_GUIDE.md)
+gh-oauth-helper token --url "http://localhost:8080/callback?code=ghu_1234567890abcdef&state=abc123def456"
 
 # JSON output
 gh-oauth-helper --json token --code ghu_1234567890abcdef
@@ -338,8 +344,11 @@ gh-oauth-helper auth --open
 
 # 2. User authorizes in browser, copy code from callback
 
-# 3. Exchange code for token
+# 3. Exchange code for token (traditional method)
 gh-oauth-helper token --code YOUR_AUTH_CODE
+
+# Alternative: Use the easier paste-the-URL method
+gh-oauth-helper token --url "FULL_CALLBACK_URL"
 
 # 4. Test token
 gh-oauth-helper test --token YOUR_ACCESS_TOKEN
@@ -363,6 +372,9 @@ gh-oauth-helper --secure token \
   --code "$AUTH_CODE" \
   --state "$SAVED_STATE"
 
+# Alternative: Use the full callback URL for easier integration
+gh-oauth-helper --secure token --url "$FULL_CALLBACK_URL"
+
 # 4. Verify token before use
 gh-oauth-helper test --token "$ACCESS_TOKEN"
 ```
@@ -379,11 +391,15 @@ AUTH_URL=$(echo "$AUTH_RESPONSE" | jq -r '.authorization_url')
 STATE=$(echo "$AUTH_RESPONSE" | jq -r '.state')
 
 echo "Visit: $AUTH_URL"
-echo "Enter the authorization code:"
-read -r CODE
+echo "Enter the authorization code (or paste full callback URL):"
+read -r CODE_OR_URL
 
-# Exchange code for token
-TOKEN_RESPONSE=$(gh-oauth-helper --json token --code "$CODE" --state "$STATE")
+# Exchange code for token (handle both code and URL formats)
+if [[ "$CODE_OR_URL" == http* ]]; then
+    TOKEN_RESPONSE=$(gh-oauth-helper --json token --url "$CODE_OR_URL")
+else
+    TOKEN_RESPONSE=$(gh-oauth-helper --json token --code "$CODE_OR_URL" --state "$STATE")
+fi
 ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
 
 # Verify token

@@ -20,7 +20,7 @@ export GITHUB_CLIENT_SECRET="your_oauth_app_client_secret"
 export GITHUB_REDIRECT_URI="http://localhost:8080/callback"  # Optional
 ```
 
-### 2. Basic Usage
+### 2. Basic Python Examples
 
 ```python
 from gh_oauth_helper import start_auth_flow, complete_auth_flow, verify_token
@@ -30,6 +30,7 @@ auth_url, state = start_auth_flow(scopes=["user:email", "repo"])
 print(f"Visit: {auth_url}")
 
 # After user authorization, exchange the code for a token
+# (Alternatively, use the new paste-the-URL method - see OAUTH_FLOW_GUIDE.md)
 token_data = complete_auth_flow(authorization_code)
 access_token = token_data["access_token"]
 
@@ -38,7 +39,85 @@ user_info = verify_token(access_token)
 print(f"Authenticated as: {user_info['login']}")
 ```
 
-### 3. Using the GitHubOAuth Class
+### 3. CLI Quick-Start: Paste-the-URL OAuth Flow
+
+The simplest way to get a GitHub access token - just paste the full callback URL after authorization, no manual code extraction needed.
+
+#### Step-by-Step Example
+
+1. **Setup Env Variables (or use them in the cli):**
+   ```bash
+   gh-oauth-helper auth --open --scopes user repo
+   ```
+
+2. **Authorize in browser (opens automatically)**
+   • GitHub opens asking for permissions
+   • Click "Authorize application"
+   • Browser redirects to: `http://localhost:8080/callback?code=abc123def456&state=xyz789`
+
+   Output:
+   ```
+   🚀 Opening GitHub authorization page...
+   📋 After authorization, run `gh-oauth-helper token --url "FULL CALLBACK URL"
+   ```
+
+3. **Paste the complete URL:**
+   ```
+   📋 After authorization, paste the complete callback URL here:
+   > gh-oauth-helper token --url http://localhost:8080/callback?code=abc123def456&state=xyz789
+   ```
+
+   Output:
+   ```
+   ✅ Access token generated successfully!
+   Token: ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   ```
+
+#### Verify Your Token
+
+Immediately test that your token works:
+```bash
+gh-oauth-helper test --token TOKEN
+```
+
+Output:
+```
+✅ Token is valid
+User: your-username
+Scopes: repo, user:email
+```
+
+#### Verbose Mode Comparison
+
+Use `--verbose` on both commands for detailed information about operations, API calls, and token details:
+
+| Normal mode | Verbose mode |
+|-------------|-------------|
+| ✅ Access token generated successfully! | ✅ Access token generated successfully!<br>📝 Scopes: repo, user:email, read:org<br>⏰ Expires: Never<br>🔍 Raw response: {"access_token":"ghp_xxx...","scope":"repo,user:email,read:org","token_type":"bearer"}<br>📊 Rate limit: 5000/5000 remaining |
+| ✅ Token is valid | ✅ Token is valid<br>👤 User: your-username (ID: 12345)<br>📝 Scopes: repo, user:email, read:org<br>⏰ Token created: 2024-01-15T10:30:00Z<br>📊 Rate limit: 4999/5000 remaining |
+
+#### Platform-Specific Notes
+
+> **Windows (PowerShell)**
+> ```powershell
+> gh-oauth-helper token --url "http://localhost:8080/callback"
+> ```
+
+> **Windows (Command Prompt)**
+> ```cmd
+> gh-oauth-helper token --url "http://localhost:8080/callback"
+> ```
+
+> **macOS/Linux (Bash/Zsh)**
+> ```bash
+> gh-oauth-helper token --url "http://localhost:8080/callback"
+> ```
+
+> 💡 **Pro Tip**: On all platforms, make sure to wrap the callback URL in quotes to handle special characters properly.
+
+Need more control? See the [Complete CLI Reference](#complete-cli-reference) below for advanced options, custom scopes, and power-user features.
+
+### 4. Using the GitHubOAuth Class
 
 ```python
 from gh_oauth_helper import GitHubOAuth, GitHubOAuthError
@@ -56,6 +135,7 @@ auth_url, state = oauth.generate_authorization_url(
 )
 
 # Exchange authorization code for token
+# For easier flows, consider using the new paste-the-URL method (see OAUTH_FLOW_GUIDE.md)
 try:
     token_data = oauth.exchange_code_for_token(code, state)
     access_token = token_data["access_token"]
@@ -145,6 +225,13 @@ Complete OAuth flow by exchanging code for token.
 #### `verify_token(access_token, oauth_helper=None)`
 Verify a token by testing API access.
 
+## OAuth Flow Methods
+
+The library supports two methods for exchanging authorization codes:
+
+1. **Traditional method**: Extract code manually from callback URL
+2. **Paste-the-URL method**: Copy entire callback URL (recommended - see [OAUTH_FLOW_GUIDE.md](OAUTH_FLOW_GUIDE.md))
+
 ## Common Scopes
 
 - `user`: Read user profile information
@@ -170,7 +257,7 @@ except GitHubOAuthError as e:
 
 Common error scenarios:
 - Missing credentials
-- Invalid authorization codes
+- Invalid authorization codes (use --verbose for detailed error info)
 - Expired or invalid tokens
 - Network connectivity issues
 - API rate limiting

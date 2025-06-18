@@ -99,12 +99,16 @@ Exchange an authorization code for an access token.
 
 ```python
 try:
+    # Traditional method: extract code manually
     token_data = oauth.exchange_code_for_token(
         code="ghu_1234567890abcdef",
         state="abc123"  # From generate_authorization_url
     )
     access_token = token_data["access_token"]
     print(f"Token received: {access_token[:10]}...")
+    
+    # Note: For easier flows, consider using the CLI's paste-the-URL method
+    # See OAUTH_FLOW_GUIDE.md for details
 except GitHubOAuthError as e:
     print(f"Token exchange failed: {e}")
 ```
@@ -204,8 +208,11 @@ Complete an OAuth flow by exchanging code for token.
 ```python
 from gh_oauth_helper import complete_auth_flow
 
+# Traditional code exchange method
 token_data = complete_auth_flow(code="ghu_123", state="abc123")
 access_token = token_data["access_token"]
+
+# For easier flows, see the CLI's paste-the-URL method in OAUTH_FLOW_GUIDE.md
 ```
 
 ### `verify_token(access_token, oauth_helper=None)`

@@ -331,6 +331,9 @@ class TokenManager:
 ### 5. Error Handling and Logging
 
 #### Secure Error Handling
+
+**Note**: Use the `--verbose` flag for detailed debugging information while maintaining security (sensitive data is never exposed).
+
 ```python
 import logging
 from gh_oauth_helper import GitHubOAuthError
@@ -446,6 +449,9 @@ token_data = oauth.exchange_code_for_token(code)  # No state verification
 
 # ✅ DO
 token_data = oauth.exchange_code_for_token(code, state)  # Verify state
+
+# 💡 Alternative: Use the CLI's paste-the-URL method for easier secure flows
+# See OAUTH_FLOW_GUIDE.md for details
 ```
 
 ### 3. Using HTTP in Production

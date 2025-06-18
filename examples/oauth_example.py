@@ -39,6 +39,8 @@ def example_basic_usage():
         print(f"   {auth_url}")
         print(f"2. After authorization, you'll be redirected with a 'code' parameter")
         print(f"3. Store the state for CSRF protection: {state}")
+        print(f"\n💡 Tip: For easier flows, use the CLI's paste-the-URL method!")
+        print(f"   See OAUTH_FLOW_GUIDE.md for details")
         
         # Simulate receiving the authorization code
         print("\n--- Simulating code exchange ---")
@@ -116,6 +118,7 @@ def example_complete_flow_simulation():
         # Step 3: Exchange code for token (simulated)
         print("\nStep 3: Exchange authorization code for token (simulated)")
         print("(In real usage, you would call oauth.exchange_code_for_token(code))")
+        print("💡 Alternative: Use the CLI with --url for easier flows (see OAUTH_FLOW_GUIDE.md)")
         
         # Step 4: Test API access (simulated)
         print("\nStep 4: Test API access (simulated)")

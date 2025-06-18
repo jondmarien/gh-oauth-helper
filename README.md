@@ -57,8 +57,11 @@ export GITHUB_REDIRECT_URI="http://localhost:8080/callback"  # Optional
 # Generate authorization URL and open in browser
 gh-oauth-helper auth --open
 
-# Exchange authorization code for token
+# Exchange authorization code for token (traditional method)
 gh-oauth-helper token --code YOUR_AUTH_CODE
+
+# Or use the easier paste-the-URL method (recommended!)
+gh-oauth-helper token --url "http://localhost:8080/callback?code=YOUR_AUTH_CODE&state=YOUR_STATE"
 
 # Test token validity
 gh-oauth-helper test --token YOUR_ACCESS_TOKEN
@@ -146,13 +149,13 @@ gh-oauth-helper --json auth --scopes user
 ### Token Exchange
 
 ```bash
-# Method 1: Exchange authorization code for access token
+# Method 1: Exchange authorization code for access token (traditional)
 gh-oauth-helper token --code ghu_1234567890abcdef
 
 # With state verification (recommended)
 gh-oauth-helper token --code ghu_1234567890abcdef --state abc123
 
-# Method 2: Paste the full callback URL (easier!)
+# Method 2: Paste the full callback URL (easier! - see OAUTH_FLOW_GUIDE.md)
 gh-oauth-helper token --url "http://localhost:8080/callback?code=ghu_1234567890abcdef&state=abc123"
 
 # JSON output
@@ -168,7 +171,7 @@ gh-oauth-helper test --token gho_1234567890abcdef
 # Revoke token
 gh-oauth-helper revoke --token gho_1234567890abcdef
 
-# Verbose output for debugging
+# Verbose output for debugging (shows detailed operation info)
 gh-oauth-helper --verbose test --token gho_1234567890abcdef
 ```
 
@@ -182,9 +185,12 @@ gh-oauth-helper token --code YOUR_CODE --state YOUR_STATE
 gh-oauth-helper test --token YOUR_ACCESS_TOKEN
 
 # Easy method: Use the full callback URL (recommended for beginners)
+# See OAUTH_FLOW_GUIDE.md for detailed instructions
 gh-oauth-helper auth --open
 # (authorize in browser, copy the entire callback URL)
 gh-oauth-helper token --url "http://localhost:8080/callback?code=ghu_...&state=..."
+# Test your token immediately
+gh-oauth-helper test --token YOUR_ACCESS_TOKEN
 
 # One-liner for development (using environment variables)
 gh-oauth-helper auth --open && echo "Paste your code:" && read CODE && gh-oauth-helper token --code $CODE

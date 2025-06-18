@@ -9,9 +9,8 @@ import argparse
 import sys
 import json
 import webbrowser
-import os
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 from urllib.parse import urlparse, parse_qs
 
 try:
@@ -20,17 +19,15 @@ try:
     from rich.text import Text
     from rich.table import Table
     from rich.syntax import Syntax
-    from rich.markdown import Markdown
-    from rich import print as rprint
-    from rich.columns import Columns
     from rich.align import Align
+
     HAS_RICH = True
 except ImportError:
     HAS_RICH = False
-    
+
 try:
-    import colorama
     from colorama import Fore, Style, init
+
     init(autoreset=True)  # Initialize colorama
     HAS_COLOR = True
 except ImportError:
@@ -38,6 +35,7 @@ except ImportError:
     class _DummyColor:
         def __getattr__(self, name):
             return ""
+
     Fore = Style = _DummyColor()
     HAS_COLOR = False
 
@@ -64,52 +62,59 @@ def show_header() -> None:
             "    ███████║█████╗  ██║     ██████╔╝█████╗  ██████╔╝",
             "    ██╔══██║██╔══╝  ██║     ██╔═══╝ ██╔══╝  ██╔══██╗",
             "    ██║  ██║███████╗███████╗██║     ███████╗██║  ██║",
-            "    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝"
+            "    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝",
         ]
-        
+
         # Rainbow gradient colors
         rainbow_colors = [
-            "bright_red", "red", "bright_yellow", "yellow", 
-            "bright_green", "green", "bright_cyan", "cyan",
-            "bright_blue", "blue", "bright_magenta", "magenta"
+            "bright_red",
+            "red",
+            "bright_yellow",
+            "yellow",
+            "bright_green",
+            "green",
+            "bright_cyan",
+            "cyan",
+            "bright_blue",
+            "blue",
+            "bright_magenta",
+            "magenta",
         ]
-        
+
         # Create rainbow gradient ASCII art
         ascii_art = Text()
         for i, line in enumerate(ascii_lines):
             color = rainbow_colors[i % len(rainbow_colors)]
             ascii_art.append(line + "\n", style=f"bold {color}")
-        
+
         # Author and version info
         info_table = Table.grid()
         info_table.add_column(style="dim")
         info_table.add_column(style="bold white")
-        
+
         current_year = datetime.now().year
         info_table.add_row("Author:", "Jonathan Marien (@jondmarien)")
         info_table.add_row("Email:", "jon@chron0.tech")
         info_table.add_row("Year:", str(current_year))
         info_table.add_row("License:", "MIT")
-        
+
         # Create panels with centered ASCII art
         art_panel = Panel(
-            Align.center(ascii_art),
-            border_style="bright_blue",
-            padding=(0, 1)
+            Align.center(ascii_art), border_style="bright_blue", padding=(0, 1)
         )
-        
+
         info_panel = Panel(
             Align.center(info_table),
             title="[bold cyan]About[/bold cyan]",
             border_style="green",
-            padding=(1, 2)
+            padding=(1, 2),
         )
-        
+
         # Display header
         console.print(art_panel)
         console.print(info_panel)
         console.print()
-        
+
     else:
         # Fallback ASCII art for terminals without Rich
         header_text = f"""
@@ -121,7 +126,7 @@ def show_header() -> None:
 ╚██████╔╝██║  ██║     ╚██████╔╝██║  ██║╚██████╔╝   ██║   ██║  ██║
  ╚═════╝ ╚═╝  ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
 
-    ██╗  ██╗███████╗██╗     ██████╗ ███████╗██████╗ 
+    ██╗  ██╗███████╗██╗     ██████╗ ███████╗██████╗
     ██║  ██║██╔════╝██║     ██╔══██╗██╔════╝██╔══██╗
     ███████║█████╗  ██║     ██████╔╝█████╗  ██████╔╝
     ██╔══██║██╔══╝  ██║     ██╔═══╝ ██╔══╝  ██╔══██╗
@@ -178,17 +183,23 @@ def display_rich_table(data: Dict[str, Any], title: str = "Information") -> None
         table = Table(title=title, show_header=True, header_style="bold magenta")
         table.add_column("Property", style="cyan", no_wrap=True)
         table.add_column("Value", style="white")
-        
+
         for key, value in data.items():
             # Format key nicely
-            formatted_key = key.replace('_', ' ').title()
+            formatted_key = key.replace("_", " ").title()
             table.add_row(formatted_key, str(value))
-        
+
         console.print(table)
     else:
         print_colored(f"\n{title}:", "cyan", bold=True)
         for key, value in data.items():
-            print_colored(f"  {key.replace('_', ' ').title()}: {value}", "white")
+            print_colored(
+                f"  {
+                    key.replace(
+                        '_',
+                        ' ').title()}: {value}",
+                "white",
+            )
 
 
 def display_code_block(code: str, language: str = "bash") -> None:
@@ -203,8 +214,8 @@ def display_code_block(code: str, language: str = "bash") -> None:
 def create_parser() -> argparse.ArgumentParser:
     """Create and configure the argument parser."""
     parser = argparse.ArgumentParser(
-        prog='gh-oauth-helper',
-        description='GitHub OAuth Helper - Manage GitHub OAuth authentication flows',
+        prog="gh-oauth-helper",
+        description="GitHub OAuth Helper - Manage GitHub OAuth authentication flows",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -213,7 +224,7 @@ Examples:
 
   # Exchange code for token (method 1: provide code directly)
   gh-oauth-helper token --client-id YOUR_ID --client-secret YOUR_SECRET --code AUTH_CODE
-  
+
   # Exchange code for token (method 2: provide full callback URL)
   gh-oauth-helper token --client-id YOUR_ID --client-secret YOUR_SECRET --url "http://localhost:8080/callback?code=AUTH_CODE&state=STATE"
 
@@ -227,118 +238,92 @@ Environment Variables:
   GITHUB_CLIENT_ID      - GitHub OAuth app client ID
   GITHUB_CLIENT_SECRET  - GitHub OAuth app client secret
   GITHUB_REDIRECT_URI   - OAuth redirect URI (default: http://localhost:8080/callback)
-        """
+        """,
     )
-    
+
     # Global arguments
     parser.add_argument(
-        '--client-id',
-        help='GitHub OAuth app client ID (can also use GITHUB_CLIENT_ID env var)'
+        "--client-id",
+        help="GitHub OAuth app client ID (can also use GITHUB_CLIENT_ID env var)",
     )
     parser.add_argument(
-        '--client-secret',
-        help='GitHub OAuth app client secret (can also use GITHUB_CLIENT_SECRET env var)'
+        "--client-secret",
+        help="GitHub OAuth app client secret (can also use GITHUB_CLIENT_SECRET env var)",
     )
     parser.add_argument(
-        '--redirect-uri',
-        help='OAuth redirect URI (can also use GITHUB_REDIRECT_URI env var)'
+        "--redirect-uri",
+        help="OAuth redirect URI (can also use GITHUB_REDIRECT_URI env var)",
     )
     parser.add_argument(
-        '--secure',
-        action='store_true',
-        help='Use secure mode (HTTPS) for redirect URI validation'
+        "--secure",
+        action="store_true",
+        help="Use secure mode (HTTPS) for redirect URI validation",
     )
     parser.add_argument(
-        '--json',
-        action='store_true',
-        help='Output results in JSON format'
+        "--json", action="store_true", help="Output results in JSON format"
     )
     parser.add_argument(
-        '--verbose', '-v',
-        action='store_true',
-        help='Enable verbose output'
+        "--verbose", "-v", action="store_true", help="Enable verbose output"
     )
     parser.add_argument(
-        '--no-header',
-        action='store_true',
-        help='Disable ASCII art header display'
+        "--no-header", action="store_true", help="Disable ASCII art header display"
     )
-    
+
     # Subcommands
-    subparsers = parser.add_subparsers(dest='command', help='Available commands')
-    
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+
     # Auth command - generate authorization URL
     auth_parser = subparsers.add_parser(
-        'auth',
-        help='Generate GitHub OAuth authorization URL'
+        "auth", help="Generate GitHub OAuth authorization URL"
     )
     auth_parser.add_argument(
-        '--scopes',
-        nargs='*',
-        default=['user:email', 'repo'],
-        help='OAuth scopes to request (default: user:email repo)'
+        "--scopes",
+        nargs="*",
+        default=["user:email", "repo"],
+        help="OAuth scopes to request (default: user:email repo)",
     )
     auth_parser.add_argument(
-        '--state',
-        help='Custom state parameter (random generated if not provided)'
+        "--state", help="Custom state parameter (random generated if not provided)"
     )
     auth_parser.add_argument(
-        '--open',
-        action='store_true',
-        help='Automatically open the authorization URL in browser'
+        "--open",
+        action="store_true",
+        help="Automatically open the authorization URL in browser",
     )
-    
+
     # Token command - exchange code for token
     token_parser = subparsers.add_parser(
-        'token',
-        help='Exchange authorization code for access token'
+        "token", help="Exchange authorization code for access token"
     )
-    
+
     # Create mutually exclusive group for code input methods
     code_group = token_parser.add_mutually_exclusive_group(required=True)
+    code_group.add_argument("--code", help="Authorization code from GitHub callback")
     code_group.add_argument(
-        '--code',
-        help='Authorization code from GitHub callback'
+        "--url",
+        help="Full callback URL from GitHub (will extract code and state automatically)",
     )
-    code_group.add_argument(
-        '--url',
-        help='Full callback URL from GitHub (will extract code and state automatically)'
-    )
-    
+
     token_parser.add_argument(
-        '--state',
-        help='State parameter for CSRF verification (not needed if using --url)'
+        "--state",
+        help="State parameter for CSRF verification (not needed if using --url)",
     )
-    
+
     # Test command - test token validity
-    test_parser = subparsers.add_parser(
-        'test',
-        help='Test access token validity'
-    )
-    test_parser.add_argument(
-        '--token',
-        required=True,
-        help='Access token to test'
-    )
-    
+    test_parser = subparsers.add_parser("test", help="Test access token validity")
+    test_parser.add_argument("--token", required=True, help="Access token to test")
+
     # Revoke command - revoke access token
-    revoke_parser = subparsers.add_parser(
-        'revoke',
-        help='Revoke access token'
-    )
-    revoke_parser.add_argument(
-        '--token',
-        required=True,
-        help='Access token to revoke'
-    )
-    
+    revoke_parser = subparsers.add_parser("revoke", help="Revoke access token")
+    revoke_parser.add_argument("--token", required=True, help="Access token to revoke")
+
     return parser
 
 
 def validate_args(args: argparse.Namespace) -> None:
     """Validate command-line arguments."""
     if args.secure and args.redirect_uri:
-        if not args.redirect_uri.startswith('https://'):
+        if not args.redirect_uri.startswith("https://"):
             raise ValueError("Secure mode requires HTTPS redirect URI")
 
 
@@ -375,23 +360,23 @@ def print_info(text: str) -> None:
 def create_oauth_helper(args: argparse.Namespace) -> GitHubOAuth:
     """Create GitHubOAuth instance from command-line arguments."""
     redirect_uri = args.redirect_uri
-    
+
     # Apply secure mode validation
-    if args.secure and redirect_uri and not redirect_uri.startswith('https://'):
+    if args.secure and redirect_uri and not redirect_uri.startswith("https://"):
         raise GitHubOAuthError("Secure mode requires HTTPS redirect URI")
-    
+
     # Show security mode status
     if args.verbose:
         if args.secure:
             print_info("Running in secure mode (HTTPS required)")
         else:
             print_info("Running in standard mode (HTTP allowed for localhost)")
-    
+
     return GitHubOAuth(
         client_id=args.client_id,
         client_secret=args.client_secret,
         redirect_uri=redirect_uri,
-        secure_mode=args.secure
+        secure_mode=args.secure,
     )
 
 
@@ -412,42 +397,39 @@ def cmd_auth(args: argparse.Namespace) -> None:
     try:
         if args.verbose:
             print_rich_info("Initializing GitHub OAuth helper...")
-        
+
         oauth = create_oauth_helper(args)
         auth_url, state = oauth.generate_authorization_url(
-            scopes=args.scopes,
-            state=args.state
+            scopes=args.scopes, state=args.state
         )
-        
-        result = {
-            'authorization_url': auth_url,
-            'state': state,
-            'scopes': args.scopes
-        }
-        
+
+        result = {"authorization_url": auth_url, "state": state, "scopes": args.scopes}
+
         if args.json:
             output_result(result, args)
         else:
             print_rich_success("Generated GitHub OAuth authorization URL")
-            
+
             if args.verbose:
                 info_data = {
-                    'scopes_requested': ', '.join(args.scopes),
-                    'state_parameter': state,
-                    'redirect_uri': oauth.redirect_uri
+                    "scopes_requested": ", ".join(args.scopes),
+                    "state_parameter": state,
+                    "redirect_uri": oauth.redirect_uri,
                 }
                 display_rich_table(info_data, "OAuth Configuration")
-            
+
             if HAS_RICH:
                 console.print("\n[bold cyan]Authorization URL:[/bold cyan]")
                 console.print(f"[link]{auth_url}[/link]")
-                console.print(f"\n[bold yellow]State (save this for verification):[/bold yellow] [cyan]{state}[/cyan]")
+                console.print(
+                    f"\n[bold yellow]State (save this for verification):[/bold yellow] [cyan]{state}[/cyan]"
+                )
             else:
                 print_colored("Authorization URL:", "cyan", bold=True)
                 print_colored(auth_url, "white")
                 print()
                 print_colored(f"State (save this for verification): {state}", "yellow")
-            
+
             if args.open:
                 print_rich_info("Opening authorization URL in browser...")
                 try:
@@ -456,7 +438,7 @@ def cmd_auth(args: argparse.Namespace) -> None:
                 except Exception as e:
                     print_rich_warning(f"Could not open browser: {e}")
                     print_rich_info("Please copy and paste the URL manually")
-            
+
     except GitHubOAuthError as e:
         print_rich_error(f"OAuth Error: {e}")
         sys.exit(1)
@@ -464,6 +446,7 @@ def cmd_auth(args: argparse.Namespace) -> None:
         print_rich_error(f"Unexpected error: {e}")
         if args.verbose:
             import traceback
+
             if HAS_RICH:
                 console.print(f"[red]{traceback.format_exc()}[/red]")
             else:
@@ -476,20 +459,20 @@ def cmd_token(args: argparse.Namespace) -> None:
     try:
         if args.verbose:
             print_rich_info("Exchanging authorization code for access token...")
-        
+
         # Extract code and state from URL if provided
         if args.url:
             parsed_url = urlparse(args.url)
             query_params = parse_qs(parsed_url.query)
-            
+
             # Extract code
-            if 'code' not in query_params:
+            if "code" not in query_params:
                 raise ValueError("No 'code' parameter found in the provided URL")
-            code = query_params['code'][0]
-            
+            code = query_params["code"][0]
+
             # Extract state if present
-            state = query_params.get('state', [None])[0]
-            
+            state = query_params.get("state", [None])[0]
+
             if args.verbose:
                 print_rich_info(f"Extracted code from URL: {code[:8]}...")
                 if state:
@@ -497,43 +480,58 @@ def cmd_token(args: argparse.Namespace) -> None:
         else:
             code = args.code
             state = args.state
-        
+
         oauth = create_oauth_helper(args)
-        token_data = oauth.exchange_code_for_token(
-            code=code,
-            state=state
-        )
-        
+        token_data = oauth.exchange_code_for_token(code=code, state=state)
+
         if args.json:
             output_result(token_data, args)
         else:
-            print_rich_success("Successfully exchanged authorization code for access token")
-            
+            print_rich_success(
+                "Successfully exchanged authorization code for access token"
+            )
+
             if args.verbose:
                 token_info = {
-                    'token_type': token_data.get('token_type', 'N/A'),
-                    'scope': token_data.get('scope', 'N/A'),
-                    'expires_in_seconds': token_data.get('expires_in', 'N/A')
+                    "token_type": token_data.get("token_type", "N/A"),
+                    "scope": token_data.get("scope", "N/A"),
+                    "expires_in_seconds": token_data.get("expires_in", "N/A"),
                 }
                 display_rich_table(token_info, "Token Details")
-            
+
             if HAS_RICH:
                 console.print("\n[bold cyan]Access Token:[/bold cyan]")
-                console.print(f"[green]{token_data.get('access_token')}[/green]")
-                
-                if 'refresh_token' in token_data:
-                    console.print(f"\n[bold yellow]Refresh Token:[/bold yellow] [yellow]{token_data['refresh_token']}[/yellow]")
-                if 'expires_in' in token_data:
-                    console.print(f"\n[bold blue]ℹ[/bold blue] Expires in: [white]{token_data['expires_in']}[/white] seconds")
+                console.print(
+                    f"[green]{
+                        token_data.get('access_token')}[/green]"
+                )
+
+                if "refresh_token" in token_data:
+                    console.print(
+                        f"\n[bold yellow]Refresh Token:[/bold yellow] [yellow]{
+                            token_data['refresh_token']}[/yellow]"
+                    )
+                if "expires_in" in token_data:
+                    console.print(
+                        f"\n[bold blue]ℹ[/bold blue] Expires in: [white]{
+                            token_data['expires_in']}[/white] seconds"
+                    )
             else:
                 print_colored("Access Token:", "cyan", bold=True)
-                print_colored(token_data.get('access_token'), "white")
-                
-                if 'refresh_token' in token_data:
-                    print_colored(f"\nRefresh Token: {token_data['refresh_token']}", "yellow")
-                if 'expires_in' in token_data:
-                    print_info(f"Expires in: {token_data['expires_in']} seconds")
-                
+                print_colored(token_data.get("access_token"), "white")
+
+                if "refresh_token" in token_data:
+                    print_colored(
+                        f"\nRefresh Token: {
+                            token_data['refresh_token']}",
+                        "yellow",
+                    )
+                if "expires_in" in token_data:
+                    print_info(
+                        f"Expires in: {
+                            token_data['expires_in']} seconds"
+                    )
+
     except GitHubOAuthError as e:
         print_rich_error(f"OAuth Error: {e}")
         sys.exit(1)
@@ -541,6 +539,7 @@ def cmd_token(args: argparse.Namespace) -> None:
         print_rich_error(f"Unexpected error: {e}")
         if args.verbose:
             import traceback
+
             if HAS_RICH:
                 console.print(f"[red]{traceback.format_exc()}[/red]")
             else:
@@ -553,36 +552,36 @@ def cmd_test(args: argparse.Namespace) -> None:
     try:
         if args.verbose:
             print_rich_info("Testing access token validity...")
-        
+
         oauth = create_oauth_helper(args)
         user_data = oauth.test_api_access(args.token)
-        
+
         if args.json:
             output_result(user_data, args)
         else:
             print_rich_success("Token is valid! User information:")
-            
+
             # Create user info table
             user_info = {
-                'username': user_data.get('login', 'N/A'),
-                'name': user_data.get('name', 'N/A'),
-                'email': user_data.get('email', 'N/A'),
-                'user_id': str(user_data.get('id', 'N/A')),
-                'account_type': user_data.get('type', 'N/A'),
-                'public_repos': str(user_data.get('public_repos', 'N/A')),
-                'followers': str(user_data.get('followers', 'N/A')),
-                'following': str(user_data.get('following', 'N/A'))
+                "username": user_data.get("login", "N/A"),
+                "name": user_data.get("name", "N/A"),
+                "email": user_data.get("email", "N/A"),
+                "user_id": str(user_data.get("id", "N/A")),
+                "account_type": user_data.get("type", "N/A"),
+                "public_repos": str(user_data.get("public_repos", "N/A")),
+                "followers": str(user_data.get("followers", "N/A")),
+                "following": str(user_data.get("following", "N/A")),
             }
-            
-            if user_data.get('company'):
-                user_info['company'] = user_data.get('company')
-            if user_data.get('location'):
-                user_info['location'] = user_data.get('location')
-            if user_data.get('blog'):
-                user_info['blog'] = user_data.get('blog')
-            
+
+            if user_data.get("company"):
+                user_info["company"] = user_data.get("company")
+            if user_data.get("location"):
+                user_info["location"] = user_data.get("location")
+            if user_data.get("blog"):
+                user_info["blog"] = user_data.get("blog")
+
             display_rich_table(user_info, "GitHub User Information")
-            
+
     except GitHubOAuthError as e:
         print_rich_error(f"OAuth Error: {e}")
         sys.exit(1)
@@ -590,6 +589,7 @@ def cmd_test(args: argparse.Namespace) -> None:
         print_rich_error(f"Unexpected error: {e}")
         if args.verbose:
             import traceback
+
             if HAS_RICH:
                 console.print(f"[red]{traceback.format_exc()}[/red]")
             else:
@@ -602,22 +602,24 @@ def cmd_revoke(args: argparse.Namespace) -> None:
     try:
         if args.verbose:
             print_rich_info("Revoking access token...")
-        
+
         oauth = create_oauth_helper(args)
         success = oauth.revoke_token(args.token)
-        
-        result = {'revoked': success}
-        
+
+        result = {"revoked": success}
+
         if args.json:
             output_result(result, args)
         else:
             if success:
                 print_rich_success("Token successfully revoked")
                 if HAS_RICH:
-                    console.print("[dim]The token can no longer be used to access GitHub's API.[/dim]")
+                    console.print(
+                        "[dim]The token can no longer be used to access GitHub's API.[/dim]"
+                    )
             else:
                 print_rich_warning("Failed to revoke token (it may already be invalid)")
-                
+
     except GitHubOAuthError as e:
         print_rich_error(f"OAuth Error: {e}")
         sys.exit(1)
@@ -625,6 +627,7 @@ def cmd_revoke(args: argparse.Namespace) -> None:
         print_rich_error(f"Unexpected error: {e}")
         if args.verbose:
             import traceback
+
             if HAS_RICH:
                 console.print(f"[red]{traceback.format_exc()}[/red]")
             else:
@@ -636,30 +639,30 @@ def main() -> None:
     """Main CLI entry point."""
     parser = create_parser()
     args = parser.parse_args()
-    
+
     # Show help if no command specified
     if not args.command:
         parser.print_help()
         sys.exit(1)
-    
+
     # Show header unless disabled or JSON output
-    if not getattr(args, 'no_header', False) and not getattr(args, 'json', False):
+    if not getattr(args, "no_header", False) and not getattr(args, "json", False):
         show_header()
-    
+
     try:
         validate_args(args)
     except ValueError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-    
+
     # Dispatch to command handlers
     command_handlers = {
-        'auth': cmd_auth,
-        'token': cmd_token,
-        'test': cmd_test,
-        'revoke': cmd_revoke
+        "auth": cmd_auth,
+        "token": cmd_token,
+        "test": cmd_test,
+        "revoke": cmd_revoke,
     }
-    
+
     handler = command_handlers.get(args.command)
     if handler:
         handler(args)
@@ -668,6 +671,5 @@ def main() -> None:
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-
