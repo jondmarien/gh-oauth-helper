@@ -5,7 +5,7 @@ This package provides utilities for handling GitHub OAuth authentication flows,
 including token management and API interactions.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Jonathan Marien"
 __email__ = "jon@chron0.tech"
 __description__ = "A Python helper package for Local GitHub OAuth authentication"
