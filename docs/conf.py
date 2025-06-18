@@ -20,8 +20,13 @@ release = '0.1.0'
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.githubpages',
+    'sphinx_autodoc_typehints',
+    'sphinx_copybutton',
     'myst_parser',
 ]
 
@@ -54,5 +59,55 @@ myst_enable_extensions = [
     "deflist",
     "tasklist",
     "colon_fence",
+    "fieldlist",
+    "html_admonition",
+    "html_image",
+    "linkify",
+    "replacements",
+    "smartquotes",
+    "substitution",
 ]
+
+# Theme options
+html_theme_options = {
+    'canonical_url': 'https://gh-oauth-helper.readthedocs.io/',
+    'logo_only': False,
+    'display_version': True,
+    'prev_next_buttons_location': 'bottom',
+    'style_external_links': False,
+    'style_nav_header_background': '#2980B9',
+    # Toc options
+    'collapse_navigation': True,
+    'sticky_navigation': True,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
+}
+
+# Autodoc settings
+autodoc_default_options = {
+    'members': True,
+    'member-order': 'bysource',
+    'special-members': '__init__',
+    'undoc-members': True,
+    'exclude-members': '__weakref__'
+}
+
+# Intersphinx mapping
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'requests': ('https://requests.readthedocs.io/en/latest/', None),
+}
+
+# Copy button configuration
+copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+copybutton_prompt_is_regexp = True
+
+# HTML context for GitHub integration
+html_context = {
+    'github_user': 'jondmarien',
+    'github_repo': 'gh-oauth-helper',
+    'github_version': 'main',
+    'doc_path': 'docs/',
+}
 

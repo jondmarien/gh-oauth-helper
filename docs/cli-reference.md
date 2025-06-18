@@ -6,6 +6,50 @@ Complete command-line interface reference for the GitHub OAuth Helper.
 
 The `gh-oauth-helper` CLI provides a convenient way to handle GitHub OAuth authentication flows from the command line. It supports the complete OAuth flow including authorization URL generation, token exchange, token validation, and token revocation.
 
+## 🎨 Rich User Interface
+
+The CLI features a modern, colorized interface with:
+
+- **🚀 ASCII Art Header**: Beautiful project branding displayed on startup
+- **📊 Rich Tables**: Clean, formatted data presentation
+- **🎯 Status Icons**: Visual indicators (✓, ℹ, ⚠, ✗) for different message types
+- **🌈 Color Coding**: Syntax highlighting and color-coded information
+- **📱 Responsive Design**: Adapts to terminal width and capabilities
+
+### Header Display
+
+By default, the CLI shows a beautiful ASCII art header with author information:
+
+```
+╭─────────────────────────────── GitHub OAuth Helper ──────────────────────────────────╮
+│  ██████╗ ██╗  ██╗      ██████╗  █████╗ ██╗   ██╗████████╗██╗  ██╗                    │
+│ ██╔════╝ ██║  ██║     ██╔═══██╗██╔══██╗██║   ██║╚══██╔══╝██║  ██║                    │
+│ ██║  ███╗███████║     ██║   ██║███████║██║   ██║   ██║   ███████║                    │ 
+│ ██║   ██║██╔══██║     ██║   ██║██╔══██║██║   ██║   ██║   ██╔══██║                    │
+│ ╚██████╔╝██║  ██║     ╚██████╔╝██║  ██║╚██████╔╝   ██║   ██║  ██║                    │
+│  ╚═════╝ ╚═╝  ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝                    │
+╰────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+**Control Options:**
+- `--no-header`: Disable ASCII art header display
+- `--json`: Automatically disables header for clean JSON output
+
+### Rich Data Tables
+
+Verbose mode (`--verbose`) displays information in beautiful tables:
+
+```
+                       OAuth Configuration                        
+┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Property         ┃ Value                                       ┃
+┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ Scopes Requested │ user, repo                                  │
+│ State Parameter  │ DyXY3J8zQkHFK0YOFr5vI5PYo24ktWz8Fc6wC6H... │
+│ Redirect Uri     │ http://localhost:8080/callback              │
+└──────────────────┴─────────────────────────────────────────────┘
+```
+
 ## Global Options
 
 These options can be used with any command:

@@ -1,0 +1,36 @@
+# Read the Docs configuration file for gh-oauth-helper
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+# Required
+version: 2
+
+# Set the version of Python and requirements required to build the docs
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.11"
+  jobs:
+    post_checkout:
+      # FIXME: this is a hack to install our project in development mode
+      # so that autodoc can find the modules and generate docs for them
+      - python -m pip install -e .
+
+# Build documentation with Sphinx
+sphinx:
+  configuration: docs/conf.py
+  fail_on_warning: false
+
+# Optionally build the docs in additional formats such as PDF and ePub
+formats:
+  - pdf
+  - epub
+
+# Optionally declare the Python requirements required to build the docs
+python:
+  install:
+    - requirements: docs/requirements.txt
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
+
